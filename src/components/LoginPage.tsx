@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Shield, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Eye, EyeOff, Shield, ArrowLeft, Mail, Lock, User } from 'lucide-react';
 
 interface LoginPageProps {
   onLogin: (email: string, password: string) => void;
-  onSignup: (email: string, password: string, confirmPassword: string) => void;
+  onSignup: (email: string, password: string, confirmPassword: string) => boolean;
   onBack: () => void;
 }
 
@@ -17,15 +18,32 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (activeTab === 'signup' && !confirmPassword) {
+      toast.error('Please confirm your password');
+      return;
+    }
+
     setIsLoading(true);
     
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     if (activeTab === 'login') {
+      toast.success('Welcome back!');
       onLogin(email, password);
     } else {
-      onSignup(email, password, confirmPassword);
+      const success = onSignup(email, password, confirmPassword);
+      if (success) {
+        toast.success('Account created successfully!');
+      } else {
+        toast.error('Passwords do not match');
+      }
     }
     
     setIsLoading(false);
@@ -33,40 +51,43 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative">
-      {/* Animated Background */}
+      {/* Enhanced Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -right-32 w-64 h-64 bg-gradient-to-br from-violet-500/10 to-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 -left-32 w-80 h-80 bg-gradient-to-br from-slate-800/20 to-slate-700/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/4 -right-32 w-80 h-80 bg-gradient-to-br from-cyan-500/8 to-blue-500/8 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 -left-32 w-96 h-96 bg-gradient-to-br from-teal-500/6 to-emerald-500/6 rounded-full blur-3xl animate-float-delayed"></div>
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 rounded-full blur-3xl animate-pulse-slow"></div>
       </div>
 
       <div className="w-full max-w-md relative z-10">
         {/* Back Button */}
         <button
           onClick={onBack}
-          className="mb-6 flex items-center text-slate-400 hover:text-slate-300 transition-colors text-sm"
+          className="mb-8 flex items-center text-slate-400 hover:text-slate-300 transition-all duration-200 text-sm group"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </button>
 
         {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-xl mb-4 shadow-lg">
-            <Shield className="w-7 h-7 text-white" />
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl mb-6 shadow-xl animate-pulse-slow">
+            <Shield className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-100 mb-2">Welcome to Rofix</h1>
-          <p className="text-slate-400 text-sm">Road Repair Analytics System</p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent mb-3">
+            Welcome to Rofix
+          </h1>
+          <p className="text-slate-400">Road Repair Analytics System</p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-slate-900/50 backdrop-blur-lg rounded-xl p-6 shadow-2xl border border-slate-800">
+        <div className="glass-card p-8 rounded-2xl shadow-2xl">
           {/* Tab Navigation */}
-          <div className="flex bg-slate-800/50 rounded-lg p-1 mb-6">
+          <div className="flex glass-nav-tabs rounded-xl p-1 mb-8">
             <button
               onClick={() => setActiveTab('login')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
                 activeTab === 'login'
-                  ? 'bg-slate-700 text-slate-100 shadow-sm'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
                   : 'text-slate-400 hover:text-slate-300'
               }`}
             >
@@ -74,9 +95,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
             </button>
             <button
               onClick={() => setActiveTab('signup')}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
                 activeTab === 'signup'
-                  ? 'bg-slate-700 text-slate-100 shadow-sm'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg'
                   : 'text-slate-400 hover:text-slate-300'
               }`}
             >
@@ -85,42 +106,46 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div className="group">
-              <label className="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-violet-400 transition-colors">
+              <label className="block text-sm font-medium text-slate-300 mb-3 group-focus-within:text-cyan-400 transition-colors">
                 Email Address
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all duration-200 text-sm"
-                placeholder="Enter your email"
-                required
-              />
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 glass-input rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all duration-200"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
             </div>
 
             {/* Password Field */}
             <div className="group">
-              <label className="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-violet-400 transition-colors">
+              <label className="block text-sm font-medium text-slate-300 mb-3 group-focus-within:text-cyan-400 transition-colors">
                 Password
               </label>
               <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all duration-200 text-sm pr-10"
+                  className="w-full pl-11 pr-12 py-3 glass-input rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all duration-200"
                   placeholder="Enter your password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-violet-400 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-cyan-400 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
@@ -128,17 +153,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
             {/* Confirm Password Field (Signup only) */}
             {activeTab === 'signup' && (
               <div className="group animate-fade-in">
-                <label className="block text-sm font-medium text-slate-300 mb-2 group-focus-within:text-violet-400 transition-colors">
+                <label className="block text-sm font-medium text-slate-300 mb-3 group-focus-within:text-cyan-400 transition-colors">
                   Confirm Password
                 </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all duration-200 text-sm"
-                  placeholder="Confirm your password"
-                  required
-                />
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3 glass-input rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all duration-200"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
               </div>
             )}
 
@@ -146,11 +174,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-violet-600 to-cyan-600 text-white py-2.5 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/25 focus:outline-none focus:ring-2 focus:ring-violet-500/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-3 px-4 rounded-xl font-medium transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/25 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Processing...
                 </div>
               ) : (
@@ -163,7 +191,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onSignup, onBack }) => {
               <div className="text-center">
                 <button
                   type="button"
-                  className="text-violet-400 hover:text-violet-300 text-sm transition-colors"
+                  className="text-cyan-400 hover:text-cyan-300 text-sm transition-colors"
+                  onClick={() => toast('Password reset functionality coming soon!')}
                 >
                   Forgot Password?
                 </button>

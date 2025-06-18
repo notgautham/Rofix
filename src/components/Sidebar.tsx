@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, LayoutDashboard, Upload, LogOut, User } from 'lucide-react';
+import { Shield, LayoutDashboard, Upload, LogOut, User, Settings } from 'lucide-react';
 
 interface SidebarProps {
   user: any;
@@ -15,22 +15,22 @@ const Sidebar: React.FC<SidebarProps> = ({ user, currentPage, onNavigate, onLogo
   ];
 
   return (
-    <div className="w-56 bg-slate-900/50 backdrop-blur-lg border-r border-slate-800 flex flex-col">
+    <div className="w-64 glass-sidebar flex flex-col border-r border-slate-800/50">
       {/* Logo */}
-      <div className="p-5 border-b border-slate-800">
+      <div className="p-6 border-b border-slate-800/50">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
-            <Shield className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+            <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-slate-100">Rofix</h1>
-            <p className="text-xs text-slate-400">Analytics</p>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">Rofix</h1>
+            <p className="text-xs text-slate-500">Analytics</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPage === item.id;
@@ -39,16 +39,16 @@ const Sidebar: React.FC<SidebarProps> = ({ user, currentPage, onNavigate, onLogo
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}
-              className={`w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-all duration-200 group text-sm ${
+              className={`w-full flex items-center px-4 py-3 rounded-xl text-left transition-all duration-200 group ${
                 isActive
-                  ? 'bg-slate-800 text-slate-100 border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
+                  ? 'bg-gradient-to-r from-cyan-600/20 to-blue-600/20 text-slate-100 border border-cyan-500/30'
+                  : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/30'
               }`}
             >
-              <Icon className={`w-4 h-4 mr-3 ${isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-violet-400'}`} />
+              <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-cyan-400' : 'text-slate-500 group-hover:text-cyan-400'}`} />
               <span className="font-medium">{item.label}</span>
               {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 bg-violet-400 rounded-full"></div>
+                <div className="ml-auto w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
               )}
             </button>
           );
@@ -56,22 +56,27 @@ const Sidebar: React.FC<SidebarProps> = ({ user, currentPage, onNavigate, onLogo
       </nav>
 
       {/* User Section */}
-      <div className="p-3 border-t border-slate-800">
-        <div className="flex items-center mb-3 p-2.5 bg-slate-800/50 rounded-lg">
-          <div className="w-7 h-7 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center mr-2.5">
+      <div className="p-4 border-t border-slate-800/50">
+        <button
+          onClick={() => onNavigate('profile')}
+          className={`w-full flex items-center mb-3 p-3 glass-card rounded-xl hover:scale-105 transition-all duration-200 ${
+            currentPage === 'profile' ? 'ring-2 ring-cyan-500/50' : ''
+          }`}
+        >
+          <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mr-3">
             <User className="w-4 h-4 text-white" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-slate-100 truncate">{user?.name}</p>
             <p className="text-xs text-slate-400 truncate">{user?.email}</p>
           </div>
-        </div>
+        </button>
         
         <button
           onClick={onLogout}
-          className="w-full flex items-center px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-300 hover:bg-red-500/10 transition-all duration-200 group text-sm"
+          className="w-full flex items-center px-4 py-3 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 group"
         >
-          <LogOut className="w-4 h-4 mr-3 text-slate-500 group-hover:text-red-400" />
+          <LogOut className="w-5 h-5 mr-3 text-slate-500 group-hover:text-red-400" />
           <span className="font-medium">Logout</span>
         </button>
       </div>

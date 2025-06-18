@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import Sidebar from './Sidebar';
-import { Upload, Video, FileText, CheckCircle, Loader } from 'lucide-react';
+import { Upload, Video, FileText, CheckCircle, Loader, AlertCircle, X } from 'lucide-react';
 
 interface UploadPageProps {
   user: any;
@@ -14,24 +15,78 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [videoError, setVideoError] = useState<string>('');
+  const [gpsError, setGpsError] = useState<string>('');
+
+  const validateVideoFile = (file: File): string => {
+    const validTypes = ['video/mp4', 'video/avi', 'video/quicktime'];
+    const maxSize = 500 * 1024 * 1024; // 500MB
+
+    if (!validTypes.includes(file.type)) {
+      return 'Please upload a valid video file (.mp4, .avi, .mov)';
+    }
+    if (file.size > maxSize) {
+      return 'Video file must be less than 500MB';
+    }
+    return '';
+  };
+
+  const validateGpsFile = (file: File): string => {
+    const validTypes = ['text/csv', 'application/gpx+xml'];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (!validTypes.includes(file.type) && !file.name.endsWith('.csv') && !file.name.endsWith('.gpx')) {
+      return 'Please upload a valid GPS file (.csv, .gpx)';
+    }
+    if (file.size > maxSize) {
+      return 'GPS file must be less than 10MB';
+    }
+    return '';
+  };
 
   const handleFileSelect = (type: 'video' | 'gps', file: File | null) => {
     if (type === 'video') {
       setVideoFile(file);
+      setVideoError('');
+      if (file) {
+        const error = validateVideoFile(file);
+        if (error) {
+          setVideoError(error);
+          toast.error(error);
+        } else {
+          toast.success('Video file validated successfully!');
+        }
+      }
     } else {
       setGpsFile(file);
+      setGpsError('');
+      if (file) {
+        const error = validateGpsFile(file);
+        if (error) {
+          setGpsError(error);
+          toast.error(error);
+        } else {
+          toast.success('GPS file validated successfully!');
+        }
+      }
     }
   };
 
   const handleUpload = async () => {
     if (!videoFile || !gpsFile) {
-      alert('Please select both video and GPS files');
+      toast.error('Please select both video and GPS files');
+      return;
+    }
+
+    if (videoError || gpsError) {
+      toast.error('Please fix file validation errors before uploading');
       return;
     }
 
     setIsUploading(true);
     setUploadProgress(0);
     setUploadStatus('Uploading files...');
+    toast.loading('Starting upload...');
 
     // Simulate upload progress
     const progressInterval = setInterval(() => {
@@ -39,15 +94,19 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
         if (prev >= 100) {
           clearInterval(progressInterval);
           setUploadStatus('Processing analysis...');
+          toast.dismiss();
+          toast.loading('Processing analysis...');
           setTimeout(() => {
             setUploadStatus('Analysis complete!');
             setIsUploading(false);
-          }, 2000);
+            toast.dismiss();
+            toast.success('Analysis completed successfully!');
+          }, 3000);
           return 100;
         }
-        return prev + 10;
+        return prev + 8;
       });
-    }, 500);
+    }, 400);
   };
 
   return (
@@ -61,16 +120,16 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
       
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-slate-900/50 backdrop-blur-lg border-b border-slate-800 p-5">
-          <h1 className="text-xl font-semibold text-slate-100 mb-1">Upload Analysis</h1>
-          <p className="text-slate-400 text-sm">Upload dashcam video and GPS data for road condition analysis</p>
+        <div className="glass-header p-6 border-b border-slate-800/50">
+          <h1 className="text-2xl font-bold text-slate-100 mb-2">Upload Analysis</h1>
+          <p className="text-slate-400">Upload dashcam video and GPS data for road condition analysis</p>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center p-5">
-          <div className="w-full max-w-xl">
-            <div className="bg-slate-900/50 backdrop-blur-lg rounded-xl p-6 border border-slate-800 shadow-lg">
-              <div className="space-y-5">
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="w-full max-w-2xl">
+            <div className="glass-card p-8 rounded-2xl">
+              <div className="space-y-8">
                 {/* Video Upload */}
                 <FileUploadCard
                   title="Dashcam Video"
@@ -78,7 +137,9 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
                   icon={Video}
                   file={videoFile}
                   onFileSelect={(file) => handleFileSelect('video', file)}
-                  acceptedTypes=".mp4,.avi,.mov"
+                  acceptedTypes=".mp4,.avi,.mov,video/*"
+                  error={videoError}
+                  gradient="from-red-500/10 to-orange-500/10"
                 />
 
                 {/* GPS Upload */}
@@ -89,24 +150,26 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
                   file={gpsFile}
                   onFileSelect={(file) => handleFileSelect('gps', file)}
                   acceptedTypes=".csv,.gpx"
+                  error={gpsError}
+                  gradient="from-blue-500/10 to-cyan-500/10"
                 />
 
                 {/* Upload Button */}
                 <button
                   onClick={handleUpload}
-                  disabled={!videoFile || !gpsFile || isUploading}
-                  className="w-full bg-gradient-to-r from-violet-600 to-cyan-600 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/25 focus:outline-none focus:ring-2 focus:ring-violet-500/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm"
+                  disabled={!videoFile || !gpsFile || isUploading || videoError !== '' || gpsError !== ''}
+                  className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white py-4 px-6 rounded-xl font-medium transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/25 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center hover:scale-105"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
+                  <Upload className="w-5 h-5 mr-2" />
                   Submit for Analysis
                 </button>
 
                 {/* Progress Section */}
                 {isUploading && (
-                  <div className="bg-slate-800/50 rounded-lg p-5 border border-slate-700/50 animate-fade-in">
-                    <div className="flex items-center justify-center mb-4">
-                      <div className="relative w-20 h-20">
-                        <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
+                  <div className="glass-card p-8 rounded-xl animate-fade-in">
+                    <div className="flex items-center justify-center mb-6">
+                      <div className="relative w-24 h-24">
+                        <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
                           <circle
                             cx="50"
                             cy="50"
@@ -125,19 +188,19 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
                             fill="none"
                             strokeDasharray={`${2 * Math.PI * 35}`}
                             strokeDashoffset={`${2 * Math.PI * 35 * (1 - uploadProgress / 100)}`}
-                            className="text-violet-500 transition-all duration-300"
+                            className="text-cyan-500 transition-all duration-300"
                             strokeLinecap="round"
                           />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-slate-100 font-bold text-base">{uploadProgress}%</span>
+                          <span className="text-slate-100 font-bold text-lg">{uploadProgress}%</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-center">
-                      <p className="text-slate-100 font-medium mb-1 text-sm">{uploadStatus}</p>
-                      <div className="flex items-center justify-center text-xs text-slate-400">
-                        <Loader className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                      <p className="text-slate-100 font-semibold mb-2">{uploadStatus}</p>
+                      <div className="flex items-center justify-center text-slate-400">
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
                         Processing...
                       </div>
                     </div>
@@ -146,11 +209,11 @@ const UploadPage: React.FC<UploadPageProps> = ({ user, onNavigate, onLogout }) =
 
                 {/* Status Messages */}
                 {uploadStatus === 'Analysis complete!' && (
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3.5 flex items-center animate-fade-in">
-                    <CheckCircle className="w-5 h-5 text-green-400 mr-2.5" />
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-center animate-fade-in">
+                    <CheckCircle className="w-6 h-6 text-emerald-400 mr-3" />
                     <div>
-                      <p className="text-green-400 font-medium text-sm">Analysis Complete!</p>
-                      <p className="text-green-400/80 text-xs">Your road analysis is ready to view.</p>
+                      <p className="text-emerald-400 font-semibold">Analysis Complete!</p>
+                      <p className="text-emerald-400/80 text-sm">Your road analysis is ready to view.</p>
                     </div>
                   </div>
                 )}
@@ -170,6 +233,8 @@ interface FileUploadCardProps {
   file: File | null;
   onFileSelect: (file: File | null) => void;
   acceptedTypes: string;
+  error?: string;
+  gradient: string;
 }
 
 const FileUploadCard: React.FC<FileUploadCardProps> = ({
@@ -178,14 +243,25 @@ const FileUploadCard: React.FC<FileUploadCardProps> = ({
   icon: Icon,
   file,
   onFileSelect,
-  acceptedTypes
+  acceptedTypes,
+  error,
+  gradient
 }) => {
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragOver(false);
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) {
       onFileSelect(droppedFile);
@@ -197,28 +273,54 @@ const FileUploadCard: React.FC<FileUploadCardProps> = ({
     onFileSelect(selectedFile);
   };
 
+  const removeFile = () => {
+    onFileSelect(null);
+  };
+
   return (
     <div
       onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="border-2 border-dashed border-slate-700 rounded-lg p-5 hover:border-violet-500/50 transition-all duration-300 bg-slate-800/30"
+      className={`border-2 border-dashed rounded-xl p-6 transition-all duration-300 ${
+        isDragOver
+          ? 'border-cyan-500/50 bg-cyan-500/5 scale-105'
+          : error
+          ? 'border-red-500/50 bg-red-500/5'
+          : file
+          ? 'border-emerald-500/50 bg-emerald-500/5'
+          : 'border-slate-700 hover:border-cyan-500/50'
+      } ${!file && !error ? `bg-gradient-to-br ${gradient}` : ''}`}
     >
       <div className="flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <Icon className="w-6 h-6 text-violet-400" />
+          <div className={`w-16 h-16 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 ${
+            file ? 'animate-pulse-slow' : ''
+          }`}>
+            <Icon className="w-8 h-8 text-slate-300" />
           </div>
-          <h3 className="text-base font-medium text-slate-100 mb-1">{title}</h3>
-          <p className="text-slate-400 text-xs mb-3">{description}</p>
+          <h3 className="text-lg font-semibold text-slate-100 mb-2">{title}</h3>
+          <p className="text-slate-400 text-sm mb-4">{description}</p>
           
           {file ? (
-            <div className="flex items-center justify-center space-x-2 text-green-400">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-xs font-medium">{file.name}</span>
+            <div className="space-y-3">
+              <div className="flex items-center justify-center space-x-2 text-emerald-400">
+                <CheckCircle className="w-5 h-5" />
+                <span className="font-medium">{file.name}</span>
+                <button
+                  onClick={removeFile}
+                  className="p-1 hover:bg-red-500/20 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-red-400" />
+                </button>
+              </div>
+              <p className="text-xs text-slate-500">
+                {(file.size / (1024 * 1024)).toFixed(2)} MB
+              </p>
             </div>
           ) : (
-            <label className="inline-flex items-center px-3 py-2 bg-slate-800 text-slate-100 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors text-sm border border-slate-700">
-              <Upload className="w-3.5 h-3.5 mr-1.5" />
+            <label className="inline-flex items-center px-4 py-3 glass-button rounded-xl cursor-pointer hover:scale-105 transition-all duration-200">
+              <Upload className="w-4 h-4 mr-2" />
               Choose File
               <input
                 type="file"
@@ -227,6 +329,13 @@ const FileUploadCard: React.FC<FileUploadCardProps> = ({
                 className="hidden"
               />
             </label>
+          )}
+
+          {error && (
+            <div className="mt-3 flex items-center justify-center text-red-400 text-sm">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              {error}
+            </div>
           )}
         </div>
       </div>

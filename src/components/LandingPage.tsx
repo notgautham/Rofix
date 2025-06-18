@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Shield, MapPin, BarChart3, Zap, ChevronDown, Github, FileText, Users } from 'lucide-react';
+import { ArrowRight, Shield, MapPin, BarChart3, Zap, ChevronDown, Github, FileText, Users, Play, CheckCircle, Clock } from 'lucide-react';
 
 interface LandingPageProps {
   onNavigate: (page: string) => void;
@@ -16,26 +16,27 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
-      {/* Animated Background */}
+      {/* Enhanced Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-violet-500/10 to-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-gradient-to-br from-slate-800/20 to-slate-700/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gradient-to-br from-cyan-500/5 to-violet-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-500/8 to-blue-500/8 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-1/2 -left-40 w-80 h-80 bg-gradient-to-br from-teal-500/6 to-emerald-500/6 rounded-full blur-3xl animate-float-delayed"></div>
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-gradient-to-br from-indigo-500/5 to-violet-500/5 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-gradient-to-br from-slate-600/4 to-slate-500/4 rounded-full blur-3xl animate-drift"></div>
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800/50">
-        <div className="max-w-6xl mx-auto px-6 py-3">
+      <nav className="fixed top-0 w-full z-50 glass-nav">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Shield className="w-5 h-5 text-white" />
               </div>
-              <span className="text-lg font-semibold text-slate-100">Rofix</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">Rofix</span>
             </div>
             <button
               onClick={() => onNavigate('login')}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-lg transition-all duration-200 text-sm font-medium border border-slate-700 hover:border-slate-600"
+              className="px-5 py-2.5 glass-button text-slate-100 rounded-xl transition-all duration-300 text-sm font-medium hover:scale-105"
             >
               Login
             </button>
@@ -45,33 +46,34 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <div className="inline-flex items-center px-3 py-1 bg-slate-800/50 border border-slate-700/50 rounded-full text-sm text-slate-300 mb-8">
-              <Zap className="w-4 h-4 mr-2 text-violet-400" />
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <div className="inline-flex items-center px-4 py-2 glass-badge rounded-full text-sm text-slate-300 mb-8">
+              <Zap className="w-4 h-4 mr-2 text-cyan-400" />
               AI-Powered Road Analytics
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <span className="bg-gradient-to-r from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-6xl md:text-8xl font-bold mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <span className="bg-gradient-to-r from-slate-100 via-cyan-200 to-blue-200 bg-clip-text text-transparent">
               Rofix
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-slate-400 mb-8 max-w-2xl mx-auto opacity-0 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            Advanced road repair analytics system powered by computer vision and GPS tracking
+          <p className="text-xl md:text-2xl text-slate-400 mb-10 max-w-3xl mx-auto opacity-0 animate-fade-in-up leading-relaxed" style={{ animationDelay: '0.6s' }}>
+            Advanced road repair analytics system powered by computer vision and GPS tracking technology
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center opacity-0 animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
             <button
               onClick={() => onNavigate('login')}
-              className="group px-6 py-3 bg-gradient-to-r from-violet-600 to-cyan-600 text-white rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/25 flex items-center justify-center"
+              className="group px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-medium transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/25 flex items-center justify-center hover:scale-105"
             >
               Get Started
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-lg font-medium transition-all duration-200 border border-slate-700 hover:border-slate-600">
+            <button className="px-8 py-4 glass-button text-slate-100 rounded-xl font-medium transition-all duration-300 hover:scale-105">
+              <Play className="w-4 h-4 mr-2 inline" />
               View Demo
             </button>
           </div>
@@ -83,13 +85,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 relative">
+      <section className="py-24 px-6 relative">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-100 mb-6">
               Intelligent Road Analysis
             </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
               Leverage cutting-edge technology to detect, analyze, and prioritize road repairs with unprecedented accuracy
             </p>
           </div>
@@ -98,50 +100,59 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             <FeatureCard
               icon={MapPin}
               title="Pothole Detection"
-              description="Advanced computer vision algorithms automatically identify and classify road defects from dashcam footage"
+              description="Advanced computer vision algorithms automatically identify and classify road defects from dashcam footage with 95% accuracy"
               delay="0.2s"
+              gradient="from-red-500/10 to-orange-500/10"
+              iconColor="text-red-400"
             />
             <FeatureCard
               icon={BarChart3}
               title="GPS Mapping"
-              description="Precise geolocation tracking correlates defects with exact coordinates for targeted repairs"
+              description="Precise geolocation tracking correlates defects with exact coordinates for targeted repairs and route optimization"
               delay="0.4s"
+              gradient="from-blue-500/10 to-cyan-500/10"
+              iconColor="text-blue-400"
             />
             <FeatureCard
               icon={Zap}
               title="Repair Insights"
-              description="Data-driven analytics provide actionable insights for maintenance prioritization and resource allocation"
+              description="Data-driven analytics provide actionable insights for maintenance prioritization and resource allocation strategies"
               delay="0.6s"
+              gradient="from-emerald-500/10 to-teal-500/10"
+              iconColor="text-emerald-400"
             />
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 px-6 bg-slate-900/30">
+      <section className="py-24 px-6 glass-section">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-100 mb-6">
               How It Works
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className="text-xl text-slate-400">
               Simple workflow, powerful results
             </p>
           </div>
           
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { step: '01', title: 'Upload Data', desc: 'Submit dashcam video and GPS logs' },
-              { step: '02', title: 'AI Analysis', desc: 'Computer vision processes footage' },
-              { step: '03', title: 'Generate Report', desc: 'Comprehensive analytics dashboard' },
-              { step: '04', title: 'Take Action', desc: 'Prioritize and schedule repairs' }
+              { step: '01', title: 'Upload Data', desc: 'Submit dashcam video and GPS logs', icon: '📤', color: 'from-cyan-500 to-blue-500' },
+              { step: '02', title: 'AI Analysis', desc: 'Computer vision processes footage', icon: '🤖', color: 'from-violet-500 to-purple-500' },
+              { step: '03', title: 'Generate Report', desc: 'Comprehensive analytics dashboard', icon: '📊', color: 'from-emerald-500 to-teal-500' },
+              { step: '04', title: 'Take Action', desc: 'Prioritize and schedule repairs', icon: '🔧', color: 'from-orange-500 to-red-500' }
             ].map((item, index) => (
               <div key={index} className="text-center group">
-                <div className="w-16 h-16 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:border-violet-500/50 transition-all duration-300">
-                  <span className="text-lg font-bold text-violet-400">{item.step}</span>
+                <div className={`w-20 h-20 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
+                  <span className="text-2xl">{item.icon}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-100 mb-2">{item.title}</h3>
-                <p className="text-sm text-slate-400">{item.desc}</p>
+                <div className="glass-card p-6 rounded-xl hover:scale-105 transition-all duration-300">
+                  <div className="text-sm font-bold text-slate-400 mb-2">{item.step}</div>
+                  <h3 className="text-lg font-semibold text-slate-100 mb-3">{item.title}</h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -149,25 +160,25 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Product Preview Section */}
-      <section className="py-20 px-6">
+      <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-100 mb-6">
               Professional Dashboard
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className="text-xl text-slate-400">
               Comprehensive analytics and reporting tools
             </p>
           </div>
           
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
-            <div className="bg-slate-800/50 rounded-xl h-96 flex items-center justify-center">
+          <div className="glass-card p-8 rounded-2xl hover:scale-[1.02] transition-all duration-500">
+            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-xl h-96 flex items-center justify-center border border-slate-700/30">
               <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-violet-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="w-10 h-10 text-violet-400" />
+                <div className="w-24 h-24 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
+                  <BarChart3 className="w-12 h-12 text-cyan-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-100 mb-2">Dashboard Preview</h3>
-                <p className="text-slate-400">Interactive analytics and reporting interface</p>
+                <h3 className="text-2xl font-semibold text-slate-100 mb-3">Dashboard Preview</h3>
+                <p className="text-slate-400 text-lg">Interactive analytics and reporting interface</p>
               </div>
             </div>
           </div>
@@ -175,43 +186,49 @@ const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Resources Section */}
-      <section className="py-20 px-6 bg-slate-900/30">
+      <section className="py-24 px-6 glass-section">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-100 mb-6">
               Resources & Documentation
             </h2>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             <ResourceCard
               icon={FileText}
               title="Documentation"
               description="Comprehensive guides and API documentation"
+              gradient="from-blue-500/10 to-cyan-500/10"
             />
             <ResourceCard
               icon={Github}
               title="Open Source"
               description="View source code and contribute to the project"
+              gradient="from-slate-500/10 to-slate-600/10"
             />
             <ResourceCard
               icon={Users}
               title="Community"
               description="Join our community of developers and researchers"
+              gradient="from-emerald-500/10 to-teal-500/10"
             />
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-slate-800">
+      <footer className="py-16 px-6 border-t border-slate-800/50 glass-section">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-white" />
+            <div className="flex items-center space-x-3 mb-6 md:mb-0">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Shield className="w-6 h-6 text-white" />
               </div>
-              <span className="text-lg font-semibold text-slate-100">Rofix</span>
+              <div>
+                <span className="text-xl font-bold bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">Rofix</span>
+                <p className="text-xs text-slate-500">Road Analytics System</p>
+              </div>
             </div>
             <div className="text-sm text-slate-400">
               © 2024 Rofix. Advanced road repair analytics system.
@@ -228,19 +245,21 @@ interface FeatureCardProps {
   title: string;
   description: string;
   delay: string;
+  gradient: string;
+  iconColor: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description, delay }) => {
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description, delay, gradient, iconColor }) => {
   return (
     <div 
-      className="group p-6 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-all duration-300 opacity-0 animate-fade-in-up"
+      className="group glass-card p-8 rounded-2xl hover:scale-105 transition-all duration-300 opacity-0 animate-fade-in-up"
       style={{ animationDelay: delay }}
     >
-      <div className="w-12 h-12 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center mb-4 group-hover:border-violet-500/50 transition-all duration-300">
-        <Icon className="w-6 h-6 text-violet-400" />
+      <div className={`w-16 h-16 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300`}>
+        <Icon className={`w-8 h-8 ${iconColor}`} />
       </div>
-      <h3 className="text-lg font-semibold text-slate-100 mb-2">{title}</h3>
-      <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
+      <h3 className="text-xl font-semibold text-slate-100 mb-4">{title}</h3>
+      <p className="text-slate-400 leading-relaxed">{description}</p>
     </div>
   );
 };
@@ -249,16 +268,17 @@ interface ResourceCardProps {
   icon: React.ComponentType<any>;
   title: string;
   description: string;
+  gradient: string;
 }
 
-const ResourceCard: React.FC<ResourceCardProps> = ({ icon: Icon, title, description }) => {
+const ResourceCard: React.FC<ResourceCardProps> = ({ icon: Icon, title, description, gradient }) => {
   return (
-    <div className="group p-6 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-all duration-300 cursor-pointer">
-      <div className="w-12 h-12 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center mb-4 group-hover:border-violet-500/50 transition-all duration-300">
-        <Icon className="w-6 h-6 text-violet-400" />
+    <div className="group glass-card p-8 rounded-2xl hover:scale-105 transition-all duration-300 cursor-pointer">
+      <div className={`w-16 h-16 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300`}>
+        <Icon className="w-8 h-8 text-slate-300" />
       </div>
-      <h3 className="text-lg font-semibold text-slate-100 mb-2">{title}</h3>
-      <p className="text-slate-400 text-sm">{description}</p>
+      <h3 className="text-xl font-semibold text-slate-100 mb-3">{title}</h3>
+      <p className="text-slate-400">{description}</p>
     </div>
   );
 };
