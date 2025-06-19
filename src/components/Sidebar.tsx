@@ -15,9 +15,9 @@ const Sidebar: React.FC<SidebarProps> = ({ user, currentPage, onNavigate, onLogo
   ];
 
   return (
-    <div className="w-64 glass-sidebar flex flex-col border-r border-slate-800/50">
+    <div className="w-64 glass-sidebar flex flex-col border-r border-slate-800/50 h-screen">
       {/* Logo */}
-      <div className="p-6 border-b border-slate-800/50">
+      <div className="p-6 border-b border-slate-800/50 flex-shrink-0">
         <div className="flex items-center">
           <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
             <Shield className="w-6 h-6 text-white" />
@@ -30,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, currentPage, onNavigate, onLogo
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentPage === item.id;
@@ -55,8 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({ user, currentPage, onNavigate, onLogo
         })}
       </nav>
 
-      {/* User Section */}
-      <div className="p-4 border-t border-slate-800/50">
+      {/* User Section - Pinned to bottom */}
+      <div className="p-4 border-t border-slate-800/50 flex-shrink-0">
         <button
           onClick={() => onNavigate('profile')}
           className={`w-full flex items-center mb-3 p-3 glass-card rounded-xl hover:scale-105 transition-all duration-200 ${

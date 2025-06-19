@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Eye, MapPin, Calendar, AlertTriangle, CheckCircle, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Eye, MapPin, Calendar, AlertTriangle, CheckCircle, Clock, ChevronLeft, ChevronRight, FileX } from 'lucide-react';
 
 interface RoadTableProps {
   onViewResults: (road: any) => void;
   searchQuery: string;
   dateFilter: string;
   statusFilter: string;
+  customDateRange: { start: string; end: string };
 }
 
-const RoadTable: React.FC<RoadTableProps> = ({ onViewResults, searchQuery, dateFilter, statusFilter }) => {
+const RoadTable: React.FC<RoadTableProps> = ({ onViewResults, searchQuery, dateFilter, statusFilter, customDateRange }) => {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -124,6 +125,37 @@ const RoadTable: React.FC<RoadTableProps> = ({ onViewResults, searchQuery, dateF
         return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
     }
   };
+
+  // Empty state component
+  const EmptyState = () => (
+    <div className="text-center py-16">
+      <div className="w-20 h-20 bg-gradient-to-br from-slate-600/20 to-slate-700/20 rounded-3xl flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
+        <FileX className="w-10 h-10 text-slate-400" />
+      </div>
+      <h3 className="text-xl font-semibold text-slate-100 mb-3">No Roads Found</h3>
+      <p className="text-slate-400 mb-6 max-w-md mx-auto">
+        {searchQuery || statusFilter !== 'all' || dateFilter !== 'all' 
+          ? 'No roads match your current filters. Try adjusting your search criteria.'
+          : 'No road analyses have been uploaded yet. Upload your first dashcam video to get started.'
+        }
+      </p>
+      {(searchQuery || statusFilter !== 'all' || dateFilter !== 'all') && (
+        <button
+          onClick={() => {
+            // Reset all filters
+            window.location.reload(); // Simple reset for demo
+          }}
+          className="px-6 py-3 glass-button rounded-xl text-slate-100 hover:scale-105 transition-all duration-200"
+        >
+          Clear Filters
+        </button>
+      )}
+    </div>
+  );
+
+  if (filteredRoads.length === 0) {
+    return <EmptyState />;
+  }
 
   return (
     <div>

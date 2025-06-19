@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import RoadTable from './RoadTable';
-import { MapPin, Activity, Search, Calendar, Filter, Settings, HelpCircle, FileText } from 'lucide-react';
+import DatePicker from './DatePicker';
+import { MapPin, Activity, Search, Calendar, Filter, Settings, HelpCircle, FileText, TestTube } from 'lucide-react';
 
 interface DashboardProps {
   user: any;
   onNavigate: (page: string) => void;
   onLogout: () => void;
   onViewResults: (road: any) => void;
+  isTestMode: boolean;
+  onToggleTestMode: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onViewResults }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onViewResults, isTestMode, onToggleTestMode }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showToolsMenu, setShowToolsMenu] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [customDateRange, setCustomDateRange] = useState({ start: '', end: '' });
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -22,13 +27,38 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onVie
   };
 
   const handleDateFilter = (filter: string) => {
-    setDateFilter(filter);
-    // TODO: Implement date filtering
+    if (filter === 'custom') {
+      setShowDatePicker(true);
+    } else {
+      setDateFilter(filter);
+      setShowDatePicker(false);
+    }
   };
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
     // TODO: Implement status filtering
+  };
+
+  const handleCustomDateSelect = (start: string, end: string) => {
+    setCustomDateRange({ start, end });
+    setDateFilter('custom');
+    setShowDatePicker(false);
+  };
+
+  const handleToolsMenuClick = (action: string) => {
+    setShowToolsMenu(false);
+    switch (action) {
+      case 'help':
+        onNavigate('help');
+        break;
+      case 'documentation':
+        onNavigate('documentation');
+        break;
+      case 'settings':
+        onNavigate('settings');
+        break;
+    }
   };
 
   return (
@@ -49,32 +79,61 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onVie
               <p className="text-slate-400">Monitor road conditions and analytics</p>
             </div>
             
-            {/* Tools Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setShowToolsMenu(!showToolsMenu)}
-                className="flex items-center px-4 py-2 glass-button rounded-xl text-slate-300 hover:text-slate-100 transition-all duration-200"
-              >
-                <Settings className="w-4 h-4 mr-2" />
-                Tools
-              </button>
-              
-              {showToolsMenu && (
-                <div className="absolute right-0 top-12 w-48 glass-card rounded-xl p-2 shadow-xl z-10 animate-fade-in">
-                  <button className="w-full flex items-center px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg transition-all duration-200">
-                    <HelpCircle className="w-4 h-4 mr-3" />
-                    Help & Support
-                  </button>
-                  <button className="w-full flex items-center px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg transition-all duration-200">
-                    <FileText className="w-4 h-4 mr-3" />
-                    Documentation
-                  </button>
-                  <button className="w-full flex items-center px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg transition-all duration-200">
-                    <Settings className="w-4 h-4 mr-3" />
-                    Settings
-                  </button>
-                </div>
-              )}
+            <div className="flex items-center space-x-4">
+              {/* Test Mode Toggle */}
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-slate-400">Test Mode</span>
+                <button
+                  onClick={onToggleTestMode}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+                    isTestMode ? 'bg-cyan-600' : 'bg-slate-700'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                      isTestMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+                <TestTube className={`w-4 h-4 ${isTestMode ? 'text-cyan-400' : 'text-slate-500'}`} />
+              </div>
+
+              {/* Tools Menu */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowToolsMenu(!showToolsMenu)}
+                  className="flex items-center px-4 py-2 glass-button rounded-xl text-slate-300 hover:text-slate-100 transition-all duration-200"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Tools
+                </button>
+                
+                {showToolsMenu && (
+                  <div className="absolute right-0 top-12 w-48 glass-card rounded-xl p-2 shadow-xl z-50 animate-fade-in">
+                    <button 
+                      onClick={() => handleToolsMenuClick('help')}
+                      className="w-full flex items-center px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
+                    >
+                      <HelpCircle className="w-4 h-4 mr-3" />
+                      Help & Support
+                    </button>
+                    <button 
+                      onClick={() => handleToolsMenuClick('documentation')}
+                      className="w-full flex items-center px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
+                    >
+                      <FileText className="w-4 h-4 mr-3" />
+                      Documentation
+                    </button>
+                    <button 
+                      onClick={() => handleToolsMenuClick('settings')}
+                      className="w-full flex items-center px-3 py-2 text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 rounded-lg transition-all duration-200"
+                    >
+                      <Settings className="w-4 h-4 mr-3" />
+                      Settings
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -128,7 +187,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onVie
               </div>
               
               {/* Date Filter */}
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 relative">
                 <Calendar className="w-5 h-5 text-slate-400" />
                 <select
                   value={dateFilter}
@@ -141,6 +200,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onVie
                   <option value="month">Last 30 Days</option>
                   <option value="custom">Custom Range</option>
                 </select>
+                
+                {showDatePicker && (
+                  <DatePicker
+                    onSelect={handleCustomDateSelect}
+                    onClose={() => setShowDatePicker(false)}
+                  />
+                )}
               </div>
               
               {/* Status Filter */}
@@ -165,6 +231,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onNavigate, onLogout, onVie
               searchQuery={searchQuery}
               dateFilter={dateFilter}
               statusFilter={statusFilter}
+              customDateRange={customDateRange}
             />
           </div>
         </div>
